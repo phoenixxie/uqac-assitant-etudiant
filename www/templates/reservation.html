@@ -1,0 +1,86 @@
+<ion-view view-title="Réservation">
+  <ion-content class="padding">
+    <div class="form-horizontal form-group">
+      <label class="control-label col-sm-1">Date:</label>
+
+      <div class="col-sm-4 input-group">
+        <input class="form-control" readonly uib-datepicker-popup="yyyy/MM/dd" ng-model="data.dt"
+               is-open="status.opened" starting-day="0" show-weeks="false"
+               min-date="data.minDate" max-date="data.maxDate"
+               ng-required="true" current-text="Aujourd'hui" clear-text="Effacer" close-text="Fermer"
+               ng-click="open($event)" ng-change="getSchedule()"/>
+        <span class="input-group-btn">
+          <button type="button" class="btn btn-default" ng-click="open($event)"><i
+            class="glyphicon glyphicon-calendar"></i></button>
+        </span>
+      </div>
+    </div>
+
+    <ion-scroll zooming="false" direction="xy" style="width:100%;" id="res-scroll">
+      <div style="margin-left: 10px">
+        <div class="row header" ng-show="data.rooms">
+          <div class="col col-time">&nbsp;</div>
+          <div class="col col-data" ng-repeat="room in data.rooms">{{ room.room }}</div>
+        </div>
+        <div class="row header" ng-show="data.rooms">
+          <div class="col col-time">&nbsp;</div>
+          <div class="col col-data" ng-repeat="room in data.rooms">{{ room.spec }}</div>
+        </div>
+
+        <div class="row" ng-repeat="status in data.statuss track by $index">
+          <div class="col col-time">{{ status.time }}</div>
+          <div class="col col-data" ng-repeat="s in status.status track by $index"
+               ng-click="reserve($parent.$index, $index)"
+               ng-class="getClass($parent.$index, $index)">{{ s }}
+          </div>
+        </div>
+      </div>
+    </ion-scroll>
+  </ion-content>
+
+</ion-view>
+
+<script id="login.html" type="text/ng-template">
+  <div class="list">
+    <label class="item item-input">
+      <span class="input-label">Numéro d'usager:</span>
+      <input type="text" ng-model="user.id">
+    </label>
+    <label class="item item-input">
+      <span class="input-label">Mot de passe:</span>
+      <input type="password" ng-model="user.pass">
+    </label>
+  </div>
+</script>
+
+<script id="reserve.html" type="text/ng-template">
+
+  <style>
+    .popup {
+      width: 350px !important;
+    }
+  </style>
+  <div class="list">
+    <label class="item item-input">
+      <span class="input-label">Numéro d'usager:</span>
+      {{user.id}}
+    </label>
+    <label class="item item-input">
+      <span class="input-label">Date:</span>
+      {{ data.dt | date:"dd/MM/yyyy" }}
+    </label>
+
+    <label class="item item-input">
+      <span class="input-label">Plage horaire:</span>
+      de&nbsp;
+      <select ng-model="data.from">
+        <option ng-repeat="status in data.statuss track by $index">{{status.time}}</option>
+      </select>
+      &nbsp;à&nbsp;
+      <select ng-model="data.to">
+        <option ng-repeat="status in data.statuss track by $index">{{status.time}}</option>
+      </select>
+    </label>
+
+  </div>
+</script>

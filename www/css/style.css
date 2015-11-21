@@ -1,0 +1,58 @@
+/* Empty. Add your own CSS if you like */
+.nav, .pagination, .carousel, .panel-title a {
+  cursor: pointer;
+}
+
+.header .col {
+  background-color: lightgrey;
+}
+
+.col {
+  border: solid 1px grey;
+  border-bottom-style: none;
+  border-right-style: none;
+  text-align: center;
+}
+
+.col:first-child {
+  text-align: right;
+}
+
+.col:last-child {
+  border-right: solid 1px grey;
+}
+
+.col-time {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 60px;
+  -moz-box-flex: 0;
+  -moz-flex: 0 0 60px;
+  -ms-flex: 0 0 60px;
+  flex: 0 0 60px;
+  max-width: 60px;
+}
+
+.col-data {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 120px;
+  -moz-box-flex: 0;
+  -moz-flex: 0 0 120px;
+  -ms-flex: 0 0 120px;
+  flex: 0 0 120px;
+  max-width: 120px;
+}
+
+.row:last-child .col {
+  border-bottom: solid 1px grey;
+}
+
+.noreserved {
+  cursor: pointer;
+  background-color: lightgoldenrodyellow;
+}
+
+.reserved {
+  background-color: indianred;
+  cursor: not-allowed;
+}
+
