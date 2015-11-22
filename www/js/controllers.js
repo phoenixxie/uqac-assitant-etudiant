@@ -1,7 +1,7 @@
 angular.module('reservation.controllers', [])
 
-  .controller('ReserveCtrl', ['$scope', '$ionicPopup', '$ionicLoading', '$window', 'Reserve',
-    function ($scope, $ionicPopup, $ionicLoading, $window, Reserve) {
+  .controller('ReserveCtrl', ['$scope', '$ionicPopup', '$ionicLoading', '$cordovaCalendar', '$window', 'Reserve',
+    function ($scope, $ionicPopup, $ionicLoading, $cordovaCalendar, $window, Reserve) {
 
       angular.element(document).ready(function () {
         var elem = angular.element(document.getElementById('res-scroll'));
@@ -38,13 +38,16 @@ angular.module('reservation.controllers', [])
         }
       };
 
-      $scope.doReserve = function (time, roomid) {
+      $scope.doReserve = function (time, room) {
         $scope.data.from = time;
         $scope.data.to = $scope.data.statuss[0].time;
+
+        var location = room.room.replace(/.*(P[23]-[0-9]{4}).*/, '$1');
 
         $ionicPopup.show({
           templateUrl: 'reserve.html',
           title: 'Réservation de salle de travail',
+          subTitle: location,
           scope: $scope,
           buttons: [
             {text: 'Annuler'},
@@ -69,11 +72,31 @@ angular.module('reservation.controllers', [])
             template: 'Chargement...'
           });
           Reserve.reserve($scope.user.id, $scope.session.name, $scope.session.email,
-            $scope.data.dt, data.from, data.to, roomid).then(function (success) {
+            $scope.data.dt, data.from, data.to, room.id).then(function (success) {
             if (success) {
               $ionicLoading.hide();
               alert("Réservation effectuée avec succès!");
               $scope.getSchedule();
+
+              var timeFrom = new Date($scope.data.dt.getTime());
+              var timeTo = new Date($scope.data.dt.getTime());
+
+              var parts = data.from.split('h');
+              timeFrom.setHours(parts[0], parts[1], 0, 0);
+              parts = data.to.split('h');
+              timeTo.setHours(parts[0], parts[1], 0, 0);
+
+              $cordovaCalendar.createEventInteractively({
+                title: 'Rendezvous à ' + location,
+                location: location,
+                notes: 'Réservation de salle de travail à la bibliothèque',
+                startDate: timeFrom,
+                endDate: timeTo
+              }).then(function (result) {
+                // success
+              }, function (err) {
+                 alert('Création d\'évenement a échoué.');
+              });
             }
           }, function (msg) {
             $ionicLoading.hide();
@@ -94,7 +117,7 @@ angular.module('reservation.controllers', [])
         }
 
         if ($scope.session.logined) {
-          $scope.doReserve(schedule.time, room.roomid);
+          $scope.doReserve(schedule.time, room);
         } else {
           $ionicPopup.show({
             templateUrl: 'login.html',
@@ -128,7 +151,7 @@ angular.module('reservation.controllers', [])
               window.localStorage['user'] = JSON.stringify(user);
               $ionicLoading.hide();
 
-              $scope.doReserve(schedule.time, room.roomid);
+              $scope.doReserve(schedule.time, room);
             }, function (msg) {
               $scope.session.logined = false;
               $ionicLoading.hide();
@@ -170,24 +193,4 @@ angular.module('reservation.controllers', [])
       };
 
       $scope.getSchedule();
-    }])
-
-  .controller('ChatsCtrl', function ($scope, Chats) {
-    // With the new view caching in Ionic, Controllers are only called
-    // when they are recreated or on app start, instead of every page change.
-    // To listen for when this page is active (for example, to refresh data),
-    // listen for the $ionicView.enter event:
-    //
-    //$scope.$on('$ionicView.enter', function(e) {
-    //});
-
-    $scope.chats = Chats.all();
-    $scope.remove = function (chat) {
-      Chats.remove(chat);
-    };
-  })
-
-  .controller('ChatDetailCtrl', function ($scope, $stateParams, Chats) {
-    console.log(Chats);
-    $scope.chat = Chats.get($stateParams.chatId);
-  });
+    }]);

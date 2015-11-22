@@ -1,14 +1,12 @@
 <ion-view view-title="Réservation">
   <ion-content class="padding">
-    <div class="form-horizontal form-group">
-      <label class="control-label col-sm-1">Date:</label>
-
-      <div class="col-sm-4 input-group">
+    <div class="form-inline form-group">
+      <label class="control-label col-sm-1" style="width:70px; padding-top:7px;">Date:</label>
+      <div class="col-sm-4 input-group" style="width:auto;">
         <input class="form-control" readonly uib-datepicker-popup="yyyy/MM/dd" ng-model="data.dt"
                is-open="status.opened" starting-day="0" show-weeks="false"
                min-date="data.minDate" max-date="data.maxDate"
-               ng-required="true" current-text="Aujourd'hui" clear-text="Effacer" close-text="Fermer"
-               ng-click="open($event)" ng-change="getSchedule()"/>
+               ng-required="true" ng-click="open($event)" ng-change="getSchedule()" show-button-bar="false"/>
         <span class="input-group-btn">
           <button type="button" class="btn btn-default" ng-click="open($event)"><i
             class="glyphicon glyphicon-calendar"></i></button>
@@ -19,7 +17,11 @@
     <ion-scroll zooming="false" direction="xy" style="width:100%;" id="res-scroll">
       <div style="margin-left: 10px">
         <div class="row header" ng-show="data.rooms">
-          <div class="col col-time">&nbsp;</div>
+          <div class="col col-time">
+            <button type="button" class="btn btn-default" ng-click="getSchedule()"><i
+              class="glyphicon glyphicon-refresh"></i>
+            </button>
+          </div>
           <div class="col col-data" ng-repeat="room in data.rooms">{{ room.room }}</div>
         </div>
         <div class="row header" ng-show="data.rooms">
@@ -42,14 +44,14 @@
 
 <script id="login.html" type="text/ng-template">
   <div class="list">
-    <label class="item item-input">
-      <span class="input-label">Numéro d'usager:</span>
+    <span class="item item-input">
+      <label class="input-label">Numéro d'usager:</label>
       <input type="text" ng-model="user.id">
-    </label>
-    <label class="item item-input">
-      <span class="input-label">Mot de passe:</span>
+    </span>
+    <span class="item item-input">
+      <label class="input-label">Mot de passe:</label>
       <input type="password" ng-model="user.pass">
-    </label>
+    </span>
   </div>
 </script>
 
@@ -61,17 +63,17 @@
     }
   </style>
   <div class="list">
-    <label class="item item-input">
-      <span class="input-label">Numéro d'usager:</span>
+    <span class="item item-input">
+      <label class="input-label">Numéro d'usager:</label>
       {{user.id}}
-    </label>
-    <label class="item item-input">
-      <span class="input-label">Date:</span>
+    </span>
+    <span class="item item-input">
+      <label class="input-label">Date:</label>
       {{ data.dt | date:"dd/MM/yyyy" }}
-    </label>
+    </span>
 
-    <label class="item item-input">
-      <span class="input-label">Plage horaire:</span>
+    <span class="item item-input">
+      <label class="input-label">Plage horaire:</label>
       de&nbsp;
       <select ng-model="data.from">
         <option ng-repeat="status in data.statuss track by $index">{{status.time}}</option>
@@ -80,7 +82,6 @@
       <select ng-model="data.to">
         <option ng-repeat="status in data.statuss track by $index">{{status.time}}</option>
       </select>
-    </label>
-
+    </span>
   </div>
 </script>

@@ -47,7 +47,6 @@ angular.module('reservation.services', [])
 
           var schedule = [];
 
-          console.log(timesTDs);
           for (var i = 0; i < timesTDs.length;) {
             var time = $(timesTDs[i]).text().trim();
             ++i;
@@ -67,7 +66,7 @@ angular.module('reservation.services', [])
             schedule: schedule
           });
         }, function (response) {
-          def.reject("connection error");
+          def.reject("Erreur de connexion");
         });
 
         return def.promise;
@@ -82,7 +81,9 @@ angular.module('reservation.services', [])
         var req = {
           method: 'POST',
           url: url,
-          headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'},
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
           transformRequest: function (obj) {
             var str = [];
             for (var p in obj)
@@ -112,10 +113,10 @@ angular.module('reservation.services', [])
               email: email
             });
           } else {
-            def.reject("login failed");
+            def.reject("Connexion échoué");
           }
         }, function (response) {
-          def.reject("connection error");
+          def.reject("Erreur de connexion");
         });
 
         return def.promise;
@@ -128,7 +129,9 @@ angular.module('reservation.services', [])
         var req = {
           method: 'POST',
           url: url,
-          headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'},
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
           transformRequest: function (obj) {
             var str = [];
             for (var p in obj)
@@ -157,15 +160,10 @@ angular.module('reservation.services', [])
           if (success) {
             def.resolve(true);
           } else {
-            var err = $(response.data).find('div.erreur');
-            if (err.length) {
-              def.reject(err.text());
-            } else {
-              def.reject('reserver failed');
-            }
+            def.reject('Réservation a échoué. Veuillez vérifier vos paramètres.');
           }
         }, function (response) {
-          def.reject("connection error");
+          def.reject("Erreur de connexion");
         });
 
         return def.promise;

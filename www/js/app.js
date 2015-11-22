@@ -1,4 +1,4 @@
-angular.module('reservation', ['ionic', 'ui.bootstrap', 'reservation.controllers', 'reservation.services'])
+angular.module('reservation', ['ionic', 'ui.bootstrap', 'reservation.controllers', 'reservation.services', 'ngCordova'])
   .constant('ApiEndpoint', {
     //url: 'http://localhost:8100/api'
     url: 'http://bibvir2.uqac.ca/orb'
@@ -11,7 +11,6 @@ angular.module('reservation', ['ionic', 'ui.bootstrap', 'reservation.controllers
       if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
         cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
         cordova.plugins.Keyboard.disableScroll(true);
-
       }
       if (window.StatusBar) {
         StatusBar.styleDefault();
