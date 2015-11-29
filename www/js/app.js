@@ -1,7 +1,9 @@
 angular.module('reservation', ['ionic', 'ui.bootstrap', 'reservation.controllers', 'reservation.services', 'ngCordova'])
   .constant('ApiEndpoint', {
-    //url: 'http://localhost:8100/api'
-    url: 'http://bibvir2.uqac.ca/orb'
+    reserveUrl: 'http://localhost:8100/api',
+    dossierUrl: 'http://localhost:8100/dossier',
+    //reserveUrl: 'http://bibvir2.uqac.ca/orb',
+    //dossierUrl: 'https://wprodl.uqac.ca/'
   })
 
   .run(function ($ionicPlatform) {
@@ -25,10 +27,50 @@ angular.module('reservation', ['ionic', 'ui.bootstrap', 'reservation.controllers
 
         .state('index', {
           url: '/',
-          templateUrl: 'templates/reservation.html',
-          controller: 'ReserveCtrl'
-        });
+          templateUrl: 'templates/home.html'
+        })
+        .state('reservation', {
+          url: '/reservation',
+          abstract: true,
+          templateUrl: 'templates/reservation-tab.html'
+        })
+        .state('reservation.home', {
+          url: '/home',
+          views: {
+            'reservation-home': {
+              templateUrl: 'templates/reservation-home.html',
+              controller: 'ReserveCtrl'
+            }
+          }
+        })
+        .state('reservation.history', {
+          url: '/history',
+          views: {
+            'reservation-history': {
+              templateUrl: 'templates/reservation-history.html',
+              controller: 'ReserveHistoryCtrl'
+            }
+          }
+        })
+        .state('dossier', {
+          url:'/dossier',
+          abstract: true,
+          templateUrl: 'templates/dossier-tab.html'
+        })
+        .state('dossier.cours', {
+          url: '/cours',
+          views: {
+            'dossier-cours': {
+              templateUrl: 'templates/dossier-cours.html',
+              controller: 'DossierCtrl'
+            }
+          }
+        })
+      ;
 
       // if none of the above states are matched, use this as the fallback
-      $urlRouterProvider.otherwise('/');
+      $urlRouterProvider
+        .when('/reservation', '/reservation/home')
+        .when('/dossier', '/dossier/cours')
+        .otherwise('/');
     }]);

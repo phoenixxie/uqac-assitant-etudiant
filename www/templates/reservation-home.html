@@ -1,32 +1,34 @@
 <ion-view view-title="Réservation">
+  <ion-nav-buttons side="primary">
+    <a class="button icon ion-home" href="#/"></a>
+  </ion-nav-buttons>
   <ion-content class="padding">
-    <div class="form-inline form-group">
-      <label class="control-label col-sm-1" style="width:70px; padding-top:7px;">Date:</label>
-      <div class="col-sm-4 input-group" style="width:auto;">
-        <input class="form-control" readonly uib-datepicker-popup="yyyy/MM/dd" ng-model="data.dt"
-               is-open="status.opened" starting-day="0" show-weeks="false"
-               min-date="data.minDate" max-date="data.maxDate"
-               ng-required="true" ng-click="open($event)" ng-change="getSchedule()" show-button-bar="false"/>
+    <div class="input-group" style="width:auto;">
+      <label class="input-group-addon">Date:</label>
+      <input class="form-control" readonly uib-datepicker-popup="yyyy/MM/dd" ng-model="data.dt"
+             is-open="status.opened" starting-day="0" show-weeks="false"
+             min-date="data.minDate" max-date="data.maxDate"
+             ng-required="true" ng-click="open($event)" ng-change="getSchedule()" show-button-bar="false"/>
         <span class="input-group-btn">
           <button type="button" class="btn btn-default" ng-click="open($event)"><i
             class="glyphicon glyphicon-calendar"></i></button>
         </span>
-      </div>
+        <span class="input-group-btn">
+          <button type="button" class="btn btn-default icon ion-refresh" ng-click="getSchedule()"></button>
+        </span>
     </div>
 
     <ion-scroll zooming="false" direction="xy" style="width:100%;" id="res-scroll">
       <div style="margin-left: 10px">
         <div class="row header" ng-show="data.rooms">
-          <div class="col col-time">
-            <button type="button" class="btn btn-default" ng-click="getSchedule()"><i
-              class="glyphicon glyphicon-refresh"></i>
-            </button>
-          </div>
+          <div class="col col-time"></div>
           <div class="col col-data" ng-repeat="room in data.rooms">{{ room.room }}</div>
+          <div class="col col-time"></div>
         </div>
         <div class="row header" ng-show="data.rooms">
           <div class="col col-time">&nbsp;</div>
           <div class="col col-data" ng-repeat="room in data.rooms">{{ room.spec }}</div>
+          <div class="col col-time">&nbsp;</div>
         </div>
 
         <div class="row" ng-repeat="status in data.statuss track by $index">
@@ -35,6 +37,13 @@
                ng-click="reserve($parent.$index, $index)"
                ng-class="getClass($parent.$index, $index)">{{ s }}
           </div>
+          <div class="col col-time">{{ status.time }}</div>
+        </div>
+
+        <div class="row footer" ng-show="data.rooms">
+          <div class="col col-time"></div>
+          <div class="col col-data" ng-repeat="room in data.rooms">{{ room.room }}</div>
+          <div class="col col-time"></div>
         </div>
       </div>
     </ion-scroll>

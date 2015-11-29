@@ -5,6 +5,11 @@
     {
       "path": "/api",
       "proxyUrl": "http://bibvir2.uqac.ca/orb"
+    },
+    {
+      "path": "/dossier",
+      "proxyUrl": "https://wprodl.uqac.ca",
+      "rejectUnauthorized" : false
     }
   ]
 }

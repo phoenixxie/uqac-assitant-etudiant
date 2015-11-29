@@ -1,13 +1,16 @@
 angular.module('reservation.services', [])
 
-  .factory('Reserve', ['$http', '$q', 'ApiEndpoint', function ($http, $q, ApiEndpoint) {
+  .factory('Reserve', ['$http', '$q', '$window', 'ApiEndpoint', function ($http, $q, $window, ApiEndpoint) {
+    var historyKey = "ReserveHistory";
+    var historyLimit = 50;
+
     return {
       get: function (date) {
         var def = $q.defer();
 
         var d = moment(date).format('DD/MM/YYYY');
 
-        var url = ApiEndpoint.url + '/?date_reservation=' + encodeURIComponent(d);
+        var url = ApiEndpoint.reserveUrl + '/?date_reservation=' + encodeURIComponent(d);
 
         $http({
           method: 'GET',
@@ -77,7 +80,7 @@ angular.module('reservation.services', [])
 
         var d = moment(date).format('DD/MM/YYYY');
 
-        var url = ApiEndpoint.url + '/reservation.php?date_reservation=' + d + '&heure_debut=' + time + '&id_item=' + roomid;
+        var url = ApiEndpoint.reserveUrl + '/reservation.php?date_reservation=' + d + '&heure_debut=' + time + '&id_item=' + roomid;
         var req = {
           method: 'POST',
           url: url,
@@ -113,7 +116,7 @@ angular.module('reservation.services', [])
               email: email
             });
           } else {
-            def.reject("Connexion échoué");
+            def.reject("Connexion échoué. Numéro d'usager inconnu ou mot de passe erronné.");
           }
         }, function (response) {
           def.reject("Erreur de connexion");
@@ -125,7 +128,7 @@ angular.module('reservation.services', [])
       reserve: function (userid, name, email, date, timeFrom, timeTo, roomid) {
         var def = $q.defer();
         var d = moment(date).format('DD/MM/YYYY');
-        var url = ApiEndpoint.url + '/reservation.php';
+        var url = ApiEndpoint.reserveUrl + '/reservation.php';
         var req = {
           method: 'POST',
           url: url,
@@ -156,17 +159,62 @@ angular.module('reservation.services', [])
         };
 
         $http(req).then(function (response) {
-          var success = -1 != response.data.indexOf('15 minutes de retard, la');
-          if (success) {
-            def.resolve(true);
-          } else {
-            def.reject('Réservation a échoué. Veuillez vérifier vos paramètres.');
-          }
+          $(response.data).find('a').each(function () {
+            var href = $(this).attr('href');
+            if (href.indexOf('annulation.php') != -1) {
+              def.resolve(href);
+            }
+          });
+          def.reject('Réservation a échoué. Veuillez vérifier vos paramètres.');
         }, function (response) {
           def.reject("Erreur de connexion");
         });
 
         return def.promise;
+      },
+
+      addHistory: function (date, room, timeFrom, timeTo, cancelUrl) {
+        var list = JSON.parse($window.localStorage[historyKey] || '[]');
+        var history = {
+          date: date,
+          room: room,
+          timeFrom: timeFrom,
+          timeTo: timeTo,
+          cancelUrl: cancelUrl
+        };
+
+        if (list.length >= historyLimit) {
+          list.splice(0, 1);
+        }
+        list.push(history);
+
+        $window.localStorage[historyKey] = JSON.stringify(list);
+      },
+
+      listHistory: function () {
+        return JSON.parse($window.localStorage[historyKey] || '[]');
+      },
+
+      clearHistory: function() {
+        $window.localStorage[historyKey] = JSON.stringify([]);
+      },
+
+      cancelReserve: function (index) {
+        var list = JSON.parse($window.localStorage[historyKey] || '[]');
+
+        if (index >= list.length) {
+          return;
+        }
+
+        var history = list[index];
+        list.splice(index, 1);
+        $window.localStorage[historyKey] = JSON.stringify(list);
+
+        $http({
+          method: 'GET',
+          url: history.cancelUrl,
+          withCredentials: true
+        });
       }
     };
   }]);

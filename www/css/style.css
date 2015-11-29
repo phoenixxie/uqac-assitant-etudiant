@@ -1,9 +1,17 @@
 /* Empty. Add your own CSS if you like */
-.nav, .pagination, .carousel, .panel-title a {
-  cursor: pointer;
+input.form-control {
+  cursor: pointer !important;
+}
+
+.input-group-btn:not(:first-child):not(:last-child) > .btn {
+  border-radius: 0;
 }
 
 .header .col {
+  background-color: lightgrey;
+}
+
+.footer .col {
   background-color: lightgrey;
 }
 
@@ -16,10 +24,12 @@
 
 .col:first-child {
   text-align: right;
+  background-color: lightgrey;
 }
 
 .col:last-child {
   border-right: solid 1px grey;
+  background-color: lightgrey;
 }
 
 .col-time {

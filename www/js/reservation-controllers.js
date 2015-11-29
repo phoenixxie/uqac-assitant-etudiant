@@ -40,7 +40,7 @@ angular.module('reservation.controllers', [])
 
       $scope.doReserve = function (time, room) {
         $scope.data.from = time;
-        $scope.data.to = $scope.data.statuss[0].time;
+        $scope.data.to = time;
 
         var location = room.room.replace(/.*(P[23]-[0-9]{4}).*/, '$1');
 
@@ -72,32 +72,33 @@ angular.module('reservation.controllers', [])
             template: 'Chargement...'
           });
           Reserve.reserve($scope.user.id, $scope.session.name, $scope.session.email,
-            $scope.data.dt, data.from, data.to, room.id).then(function (success) {
-            if (success) {
-              $ionicLoading.hide();
-              alert("Réservation effectuée avec succès!");
-              $scope.getSchedule();
+            $scope.data.dt, data.from, data.to, room.roomid).then(function (cancelUrl) {
+            $ionicLoading.hide();
 
-              var timeFrom = new Date($scope.data.dt.getTime());
-              var timeTo = new Date($scope.data.dt.getTime());
+            Reserve.addHistory($scope.data.dt, location, data.from, data.to, cancelUrl);
 
-              var parts = data.from.split('h');
-              timeFrom.setHours(parts[0], parts[1], 0, 0);
-              parts = data.to.split('h');
-              timeTo.setHours(parts[0], parts[1], 0, 0);
+            alert("Réservation effectuée avec succès!");
+            $scope.getSchedule();
 
-              $cordovaCalendar.createEventInteractively({
-                title: 'Rendezvous à ' + location,
-                location: location,
-                notes: 'Réservation de salle de travail à la bibliothèque',
-                startDate: timeFrom,
-                endDate: timeTo
-              }).then(function (result) {
-                // success
-              }, function (err) {
-                 alert('Création d\'évenement a échoué.');
-              });
-            }
+            var timeFrom = new Date($scope.data.dt.getTime());
+            var timeTo = new Date($scope.data.dt.getTime());
+
+            var parts = data.from.split('h');
+            timeFrom.setHours(parts[0], parts[1], 0, 0);
+            parts = data.to.split('h');
+            timeTo.setHours(parts[0], parts[1], 0, 0);
+
+            $cordovaCalendar.createEventInteractively({
+              title: 'Rendezvous à ' + location,
+              location: location,
+              notes: 'Réservation de salle de travail à la bibliothèque',
+              startDate: timeFrom,
+              endDate: timeTo
+            }).then(function (result) {
+              // success
+            }, function (err) {
+              alert('Création d\'évenement a échoué.');
+            });
           }, function (msg) {
             $ionicLoading.hide();
             alert(msg);
@@ -192,5 +193,23 @@ angular.module('reservation.controllers', [])
         );
       };
 
-      $scope.getSchedule();
-    }]);
+      $scope.$on('$ionicView.enter', function () {
+        $scope.getSchedule();
+      });
+    }])
+
+  .controller('ReserveHistoryCtrl', ['$scope', 'Reserve', function ($scope, Reserve) {
+    $scope.$on('$ionicView.enter', function () {
+      $scope.histories = Reserve.listHistory();
+    });
+
+    $scope.cancelReserve = function (index) {
+      Reserve.cancelReserve(index);
+      $scope.histories.splice(index, 1);
+    };
+
+    $scope.clearHistory = function () {
+      Reserve.clearHistory();
+      $scope.histories = [];
+    }
+  }]);
