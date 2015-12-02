@@ -7,32 +7,32 @@ input.form-control {
   border-radius: 0;
 }
 
-.header .col {
+.reserve-table .header .col {
   background-color: lightgrey;
 }
 
-.footer .col {
+.reserve-table .footer .col {
   background-color: lightgrey;
 }
 
-.col {
+.reserve-table .col {
   border: solid 1px grey;
   border-bottom-style: none;
   border-right-style: none;
   text-align: center;
 }
 
-.col:first-child {
+.reserve-table .col:first-child {
   text-align: right;
   background-color: lightgrey;
 }
 
-.col:last-child {
+.reserve-table .col:last-child {
   border-right: solid 1px grey;
   background-color: lightgrey;
 }
 
-.col-time {
+.reserve-table .col-time {
   -webkit-box-flex: 0;
   -webkit-flex: 0 0 60px;
   -moz-box-flex: 0;
@@ -42,7 +42,7 @@ input.form-control {
   max-width: 60px;
 }
 
-.col-data {
+.reserve-table .col-data {
   -webkit-box-flex: 0;
   -webkit-flex: 0 0 120px;
   -moz-box-flex: 0;
@@ -52,7 +52,7 @@ input.form-control {
   max-width: 120px;
 }
 
-.row:last-child .col {
+.reserve-table .row:last-child .col {
   border-bottom: solid 1px grey;
 }
 

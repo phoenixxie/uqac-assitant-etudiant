@@ -28,7 +28,7 @@ angular.module('reservation.controllers', [])
         logined: false
       };
 
-      $scope.user = JSON.parse(window.localStorage['user'] || '{}');
+      $scope.user = JSON.parse(window.localStorage['reservation.user'] || '{}');
 
       $scope.getClass = function (timeIdx, roomIdx) {
         if (!$scope.data.schedule[timeIdx].rooms[$scope.data.rooms[roomIdx].room]) {
@@ -149,7 +149,7 @@ angular.module('reservation.controllers', [])
               $scope.session.logined = true;
               $scope.session.username = info.name;
               $scope.session.email = info.email;
-              window.localStorage['user'] = JSON.stringify(user);
+              window.localStorage['reservation.user'] = JSON.stringify(user);
               $ionicLoading.hide();
 
               $scope.doReserve(schedule.time, room);

@@ -1,4 +1,4 @@
-angular.module('reservation', ['ionic', 'ui.bootstrap', 'reservation.controllers', 'reservation.services', 'ngCordova'])
+angular.module('reservation', ['ionic', 'ui.bootstrap', 'ui.calendar', 'reservation.controllers', 'reservation.services', 'dossier.controllers', 'dossier.services', 'ngCordova'])
   .constant('ApiEndpoint', {
     reserveUrl: 'http://localhost:8100/api',
     dossierUrl: 'http://localhost:8100/dossier',

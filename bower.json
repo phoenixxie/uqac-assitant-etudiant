@@ -7,6 +7,10 @@
     "ngCordova": "~0.1.23-alpha"
   },
   "dependencies": {
-    "moment": "~2.10.6"
+    "moment": "latest",
+    "angular-ui-calendar": "latest",
+    "angular-bootstrap": "latest",
+    "bootstrap": "latest",
+    "ngCordova": "latest"
   }
 }
