@@ -1,9 +1,10 @@
-angular.module('reservation', ['ionic', 'ui.bootstrap', 'ui.calendar', 'reservation.controllers', 'reservation.services', 'dossier.controllers', 'dossier.services', 'ngCordova'])
+angular.module('reservation', ['ngRoute', 'ionic', 'ui.bootstrap', 'ui.calendar', 'reservation.controllers', 'reservation.services',
+    'dossier.controllers', 'dossier.services', 'ngCordova'])
   .constant('ApiEndpoint', {
-    reserveUrl: 'http://localhost:8100/api',
-    dossierUrl: 'http://localhost:8100/dossier',
-    //reserveUrl: 'http://bibvir2.uqac.ca/orb',
-    //dossierUrl: 'https://wprodl.uqac.ca/'
+    //reserveUrl: 'http://localhost:8100/api',
+    //dossierUrl: 'http://localhost:8100/dossier',
+    reserveUrl: 'http://bibvir2.uqac.ca/orb',
+    dossierUrl: 'https://wprodl.uqac.ca'
   })
 
   .run(function ($ionicPlatform) {
@@ -17,11 +18,23 @@ angular.module('reservation', ['ionic', 'ui.bootstrap', 'ui.calendar', 'reservat
       if (window.StatusBar) {
         StatusBar.styleDefault();
       }
+
+      MobileAccessibility.setTextZoom(100);
     });
   })
 
-  .config(['$httpProvider', '$stateProvider', '$urlRouterProvider',
-    function ($httpProvider, $stateProvider, $urlRouterProvider) {
+  .config(['$ionicConfigProvider', '$httpProvider', '$stateProvider', '$urlRouterProvider',
+    function ($ionicConfigProvider, $httpProvider, $stateProvider, $urlRouterProvider) {
+
+      if (window.MobileAccessibility) {
+        window.MobileAccessibility.usePreferredTextZoom(false);
+      }
+
+      $ionicConfigProvider.tabs.position('bottom');
+      $ionicConfigProvider.navBar.alignTitle('center');
+      $ionicConfigProvider.navBar.positionPrimaryButtons('left');
+      $ionicConfigProvider.navBar.positionSecondaryButtons('right');
+
       $httpProvider.defaults.withCredentials = true;
       $stateProvider
 
@@ -53,7 +66,7 @@ angular.module('reservation', ['ionic', 'ui.bootstrap', 'ui.calendar', 'reservat
           }
         })
         .state('dossier', {
-          url:'/dossier',
+          url: '/dossier',
           abstract: true,
           templateUrl: 'templates/dossier-tab.html'
         })

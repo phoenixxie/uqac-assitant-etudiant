@@ -1,71 +1,109 @@
 angular.module('dossier.services', [])
 
   .factory('Dossier', ['$http', '$q', '$window', 'ApiEndpoint', function ($http, $q, $window, ApiEndpoint) {
+    var session = {};
 
     return {
+
       getLoginToken: function () {
+
         var def = $q.defer();
 
         var url = ApiEndpoint.dossierUrl + '/dossier_etudiant/';
 
-        $http({
-          method: 'GET',
-          url: url,
-          responseType: 'text',
-          withCredentials: true
-        }).then(function (response) {
+        //window.cordovaHTTP.acceptAllCerts(true, function () {
+        //  console.log('success!');
+        //}, function () {
+        //  console.log('error :(');
+        //});
+
+        window.cordovaHTTP.get(url, {}, {
+          'Accept': 'application/json, text/plain, */*',
+          'Accept-Encoding': 'gzip, deflate',
+          'Accept-Language': 'en-US,en;q=0.8,fr-CA;q=0.6,fr;q=0.4,fr-FR;q=0.2,zh;q=0.2,zh-CN;q=0.2',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36',
+          'Host': 'wprodl.uqac.ca'
+        }, function (response) {
           if (!response.data) {
             def.reject("Erreur de donnée");
             return;
           }
 
-          var captchaSrc = $(response.data).find('form img[alt="CAPTCHA"]');
+          var captchaUrl = ApiEndpoint.dossierUrl + $(response.data).find('form img[alt="CAPTCHA"]').attr('src');
           var match = /codeSecret1.value=(.*);/g.exec(response.data);
+          var codeSecret1 = match[1];
 
-          def.resolve({
-            captchaSrc: captchaSrc.attr('src'),
-            codeSecret1: match[1]
+          var cookie = response.headers['Set-Cookie'];
+          var re = /PHPSESSID=[a-z0-9]+/g;
+          match = cookie.match(re);
+          cookie = match[match.length - 1];
+
+          window.cordovaHTTP.get(captchaUrl, {}, {
+            'Accept': 'image/webp,*/*;q=0.8',
+            'Accept-Encoding': 'gzip, deflate',
+            'Accept-Language': 'en-US,en;q=0.8,fr-CA;q=0.6,fr;q=0.4,fr-FR;q=0.2,zh;q=0.2,zh-CN;q=0.2',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36',
+            'Host': 'wprodl.uqac.ca',
+            'Referer': url,
+            'Cookie': cookie
+          }, function (res) {
+            if (!res.data) {
+              def.reject("Erreur de donnée");
+              return;
+            }
+
+            def.resolve({
+              captchaImage: btoa(res.data),
+              captchaImageType: res.headers['Content-Type'],
+              codeSecret1: codeSecret1,
+              cookie: cookie,
+              referer: url
+            });
+
+          }, function (res) {
+            console.log(res);
+            def.reject("Erreur de connexion");
           });
+
         }, function (response) {
+          console.log(response);
           def.reject("Erreur de connexion");
         });
 
         return def.promise;
       },
 
-      login: function (userid, password, captcha, codeSecret1) {
+      login: function (userid, password, captcha, token) {
         var def = $q.defer();
 
         var url = ApiEndpoint.dossierUrl + '/dossier_etudiant/validation.html';
-        var req = {
-          method: 'POST',
-          url: url,
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          transformRequest: function (obj) {
-            var str = [];
-            for (var p in obj)
-              str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-            return str.join("&");
-          },
-          data: {
-            user: userid,
-            codeSecret: password,
-            noCaptcha: captcha,
-            codeSecret1: codeSecret1,
-            valider: 'valider'
-          },
-          responseType: 'text',
-          withCredentials: true
-        };
 
-        $http(req).then(function (response) {
+        window.cordovaHTTP.post(url, {
+          user: userid,
+          codeSecret: password,
+          noCaptcha: captcha,
+          codeSecret1: token.codeSecret1,
+          valider: 'Valider'
+        }, {
+          'Accept': 'application/json, text/plain, */*',
+          'Accept-Encoding': 'gzip, deflate',
+          'Accept-Language': 'en-US,en;q=0.8,fr-CA;q=0.6,fr;q=0.4,fr-FR;q=0.2,zh;q=0.2,zh-CN;q=0.2',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36',
+          'Host': 'wprodl.uqac.ca',
+          'Referer': token.referer,
+          'Cookie': token.cookie
+        }, function (response) {
           var success = $(response.data).find('div#partie_gauche');
           if (success.length) {
+            session.cookie = token.cookie;
             def.resolve();
           } else {
-            def.reject("Connexion échoué. Veuillez réessayer.");
+            var err = $(response.data).find('#contenu > table:nth-child(6) > tbody > tr:nth-child(2)');
+            if (err) {
+              def.reject($(err).text().trim());
+            } else {
+              def.reject("Connexion échoué. Veuillez réessayer.");
+            }
           }
         }, function (response) {
           def.reject("Erreur de connexion. Veuillez réessayer plus tard.");
@@ -78,13 +116,14 @@ angular.module('dossier.services', [])
         var def = $q.defer();
 
         var url = ApiEndpoint.dossierUrl + '/dossier_etudiant/grille_horaire.html?type=gl';
-
-        $http({
-          method: 'GET',
-          url: url,
-          responseType: 'text',
-          withCredentials: true
-        }).then(function (response) {
+        window.cordovaHTTP.get(url, {}, {
+          'Accept': 'application/json, text/plain, */*',
+          'Accept-Encoding': 'gzip, deflate',
+          'Accept-Language': 'en-US,en;q=0.8,fr-CA;q=0.6,fr;q=0.4,fr-FR;q=0.2,zh;q=0.2,zh-CN;q=0.2',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36',
+          'Host': 'wprodl.uqac.ca',
+          'Cookie': session.cookie
+        }, function (response) {
           if (!response.data) {
             def.reject("Erreur de donnée");
             return;
@@ -119,26 +158,16 @@ angular.module('dossier.services', [])
         var def = $q.defer();
 
         var url = ApiEndpoint.dossierUrl + '/dossier_etudiant/grille_horaire.html?type=gl';
-        var req = {
-          method: 'POST',
-          url: url,
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          transformRequest: function (obj) {
-            var str = [];
-            for (var p in obj)
-              str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-            return str.join("&");
-          },
-          data: {
-            session: code
-          },
-          responseType: 'text',
-          withCredentials: true
-        };
-
-        $http(req).then(function (response) {
+        window.cordovaHTTP.post(url, {
+          session: code
+        }, {
+          'Accept': 'application/json, text/plain, */*',
+          'Accept-Encoding': 'gzip, deflate',
+          'Accept-Language': 'en-US,en;q=0.8,fr-CA;q=0.6,fr;q=0.4,fr-FR;q=0.2,zh;q=0.2,zh-CN;q=0.2',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36',
+          'Host': 'wprodl.uqac.ca',
+          'Cookie': session.cookie
+        }, function (response) {
           var cours = $(response.data).find('#partie_centrale > b');
           if (cours.length) {
             var classes = [];
@@ -180,7 +209,7 @@ angular.module('dossier.services', [])
                   local = details.substring(localpos + 'Local:'.length, nextduree).trim();
                 }
 
-                if (duree.startsWith("Du")) {
+                if (duree.substring(0, 2) == "Du") {
                   var dateRe = /[0-9]{2}-[0-9]{2}-[0-9]{4}/g;
                   var match = dateRe.exec(duree);
                   info.dateFrom = moment(match[0], 'DD-MM-YYYY').toDate();
@@ -190,7 +219,6 @@ angular.module('dossier.services', [])
                   var match = /[0-9]{2}-[0-9]{2}-[0-9]{4}/g.exec(duree);
                   info.date = moment(match[0], 'DD-MM-YYYY').toDate();
                 }
-
                 info.local = local;
 
                 if (local != "Aucun") {

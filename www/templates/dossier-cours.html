@@ -2,13 +2,13 @@
   <ion-nav-buttons side="primary">
     <a class="button icon ion-home" href="#/"></a>
   </ion-nav-buttons>
-  <ion-content class="padding">
+  <ion-content class="padding" scroll="false">
     <button type="button" class="button button-block icon-left ion-refresh" ng-click="sync()">Synchroniser</button>
     <div id="myCalendar" ui-calendar="uiConfig.calendar" ng-model="eventSources" calendar="myCalendar"></div>
   </ion-content>
 </ion-view>
 
-<script id="login.html" type="text/ng-template">
+<script id="dossier-login.html" type="text/ng-template">
   <style>
     .popup {
       width: 300px !important;
@@ -24,7 +24,7 @@
       <input type="password" ng-model="user.pass">
     </span>
     <span class="item" align="center">
-      <img ng-src="{{captchaSrc}}"/>
+      <img data-ng-src="data:{{captchaImageType}};base64,{{captchaImage}}"/>
     </span>
     <span class="item item-input">
       <label class="input-label">Entrez le texte de l'image:</label>

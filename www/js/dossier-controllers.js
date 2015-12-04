@@ -9,10 +9,11 @@ angular.module('dossier.controllers', [])
         $scope.user = JSON.parse(window.localStorage['dossier.user'] || '{}');
 
         Dossier.getLoginToken().then(function (token) {
-          $scope.captchaSrc = ApiEndpoint.dossierUrl + '/' + token.captchaSrc;
+          $scope.captchaImage = token.captchaImage;
+          $scope.captchaImageType = token.captchaImageType;
 
           $ionicPopup.show({
-            templateUrl: 'login.html',
+            templateUrl: 'dossier-login.html',
             title: 'Identification des usagers',
             scope: $scope,
             buttons: [
@@ -36,7 +37,7 @@ angular.module('dossier.controllers', [])
             $ionicLoading.show({
               template: 'Veuillez attendre...'
             });
-            Dossier.login(user.id, user.pass, user.captcha, token.codeSecret1).then(function () {
+            Dossier.login(user.id, user.pass, user.captcha, token).then(function () {
               $ionicLoading.hide();
 
               $scope.user.logined = true;
@@ -124,6 +125,10 @@ angular.module('dossier.controllers', [])
 
       $scope.listTrimestres = function () {
         Dossier.listTrimestres().then(function (trims) {
+
+          $scope.calendar = {};
+          uiCalendarConfig.calendars['myCalendar'].fullCalendar('removeEvents');
+
           $scope.trimestres = trims;
 
           //$scope.getTrimestre('20151');
@@ -137,7 +142,6 @@ angular.module('dossier.controllers', [])
       };
 
       $scope.sync = function () {
-        $scope.calendar = {};
         $scope.login();
       };
 
@@ -220,6 +224,6 @@ angular.module('dossier.controllers', [])
 
         $scope.populateEvents($scope.calendar);
 
-        uiCalendarConfig.calendars['myCalendar'].fullCalendar('changeView', 'agendaWeek');
+        uiCalendarConfig.calendars['myCalendar'].fullCalendar('changeView', 'month');
       });
     }]);

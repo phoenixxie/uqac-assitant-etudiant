@@ -11,6 +11,8 @@
     "angular-ui-calendar": "latest",
     "angular-bootstrap": "latest",
     "bootstrap": "latest",
-    "ngCordova": "latest"
+    "ngCordova": "latest",
+    "requirejs": "~2.1.22",
+    "angular-route": "~1.4.8"
   }
 }
