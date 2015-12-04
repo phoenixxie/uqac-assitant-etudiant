@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.phoenixxie.uqac.reserversalles" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>Réservation</name>
+<widget id="com.phoenixxie.uqac.assistant" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  <name>Assistant Étudiant</name>
   <description>
-    Réservation de salle de travail en équipe.
+    Assistant étudiant
   </description>
   <author email="phoenix@phoenixxie.com" href="http://www.phoenixxie.com/">
     Phoenix Xie

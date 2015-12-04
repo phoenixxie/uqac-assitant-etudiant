@@ -1,7 +1,7 @@
 {
-  "name": "Réservation",
+  "name": "Assistant Étudiant",
   "version": "1.1.1",
-  "description": "Réservation de salle de travail en équipe",
+  "description": "Assistant étudiant",
   "dependencies": {
     "gulp": "^3.5.6",
     "gulp-sass": "^2.0.4",
@@ -17,16 +17,43 @@
   "cordovaPlugins": [
     "cordova-plugin-device",
     "cordova-plugin-console",
-    "cordova-plugin-whitelist",
+    {
+      "locator": "https://github.com/apache/cordova-plugin-whitelist.git",
+      "id": "cordova-plugin-whitelist"
+    },
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
-    "ionic-plugin-keyboard"
+    "ionic-plugin-keyboard",
+    {
+      "locator": "https://github.com/EddyVerbruggen/Calendar-PhoneGap-Plugin.git",
+      "id": "cordova-plugin-calendar"
+    },
+    {
+      "locator": "https://github.com/phonegap/phonegap-mobile-accessibility.git",
+      "id": "phonegap-plugin-mobile-accessibility"
+    },
+    {
+      "locator": "https://github.com/apache/cordova-plugin-network-information.git",
+      "id": "cordova-plugin-network-information"
+    },
+    "cordova-plugin-file",
+    "com.telerik.afnetworking"
   ],
   "cordovaPlatforms": [
     {
       "platform": "android",
       "locator": "browser"
     },
-    "ios"
+    "ios",
+    {
+      "platform": "browser",
+      "version": "",
+      "locator": "browser"
+    },
+    {
+      "platform": "ios",
+      "version": "",
+      "locator": "ios"
+    }
   ]
 }
