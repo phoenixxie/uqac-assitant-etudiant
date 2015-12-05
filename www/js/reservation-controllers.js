@@ -1,7 +1,7 @@
 angular.module('reservation.controllers', [])
 
-  .controller('ReserveCtrl', ['$scope', '$ionicPopup', '$ionicLoading', '$cordovaCalendar', '$window', 'Reserve',
-    function ($scope, $ionicPopup, $ionicLoading, $cordovaCalendar, $window, Reserve) {
+  .controller('ReserveCtrl', ['$scope', '$ionicPopup', '$ionicLoading', '$cordovaToast', '$cordovaCalendar', '$window', 'Reserve',
+    function ($scope, $ionicPopup, $ionicLoading, $cordovaToast, $cordovaCalendar, $window, Reserve) {
 
       angular.element(document).ready(function () {
         var elem = angular.element(document.getElementById('res-scroll'));
@@ -77,7 +77,7 @@ angular.module('reservation.controllers', [])
 
             Reserve.addHistory($scope.data.dt, location, data.from, data.to, cancelUrl);
 
-            alert("Réservation effectuée avec succès!");
+            $cordovaToast.showShortBottom("Réservation effectuée avec succès!");
             $scope.getSchedule();
 
             var timeFrom = new Date($scope.data.dt.getTime());
@@ -97,11 +97,11 @@ angular.module('reservation.controllers', [])
             }).then(function (result) {
               // success
             }, function (err) {
-              alert('Création d\'évenement a échoué.');
+              $cordovaToast.showShortBottom('Création d\'évenement a échoué.');
             });
           }, function (msg) {
             $ionicLoading.hide();
-            alert(msg);
+            $cordovaToast.showShortBottom(msg);
             $scope.session.logined = false;
           });
         });
@@ -157,7 +157,7 @@ angular.module('reservation.controllers', [])
               $scope.session.logined = false;
               $ionicLoading.hide();
 
-              alert(msg);
+              $cordovaToast.showShortBottom(msg);
             });
           });
         }
@@ -188,7 +188,7 @@ angular.module('reservation.controllers', [])
             $ionicLoading.hide();
           }, function (msg) {
             $ionicLoading.hide();
-            alert(msg);
+            $cordovaToast.showShortBottom(msg);
           }
         );
       };

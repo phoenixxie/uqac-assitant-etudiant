@@ -37,7 +37,15 @@
       "id": "cordova-plugin-network-information"
     },
     "cordova-plugin-file",
-    "com.telerik.afnetworking"
+    "com.telerik.afnetworking",
+    {
+      "locator": "https://github.com/phoenixxie/cordova-plugin-http",
+      "id": "com.synconset.cordovaHTTP"
+    },
+    {
+      "locator": "https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git",
+      "id": "cordova-plugin-x-toast"
+    }
   ],
   "cordovaPlatforms": [
     {

@@ -1,8 +1,8 @@
 angular.module('dossier.controllers', [])
 
-  .controller('DossierCtrl', ['$scope', '$ionicPopup', '$ionicModal', '$ionicLoading', '$cordovaCalendar', '$window', '$compile', '$interval',
+  .controller('DossierCtrl', ['$scope', '$ionicPopup', '$ionicModal', '$ionicLoading', '$cordovaToast', '$cordovaCalendar', '$window', '$compile', '$interval',
     'uiCalendarConfig', 'ApiEndpoint', 'Dossier',
-    function ($scope, $ionicPopup, $ionicModal, $ionicLoading, $cordovaCalendar, $window, $compile, $interval,
+    function ($scope, $ionicPopup, $ionicModal, $ionicLoading, $cordovaToast, $cordovaCalendar, $window, $compile, $interval,
               uiCalendarConfig, ApiEndpoint, Dossier) {
 
       $scope.login = function () {
@@ -54,11 +54,11 @@ angular.module('dossier.controllers', [])
               $ionicLoading.hide();
 
               $scope.user.logined = false;
-              alert(msg);
+              $cordovaToast.showShortBottom(msg);
             });
           });
         }, function (msg) {
-          alert(msg);
+          $cordovaToast.showShortBottom(msg);
         });
       };
 
@@ -119,7 +119,7 @@ angular.module('dossier.controllers', [])
           $scope.populateEvents($scope.calendar);
 
         }, function (msg) {
-          alert(msg);
+          $cordovaToast.showShortBottom(msg);
         });
       };
 
@@ -137,7 +137,7 @@ angular.module('dossier.controllers', [])
           });
 
         }, function (msg) {
-          alert(msg);
+          $cordovaToast.showShortBottom(msg);
         });
       };
 
@@ -195,7 +195,7 @@ angular.module('dossier.controllers', [])
       };
 
       $scope.alertOnEventClick = function(event, jsevent, view){
-        $ionicPopup.alert({
+        $ionicPopup.$cordovaToast.showShortBottom({
           title: event.classid,
           template: '<center>' + event.classname + '<br/>' + event.info + '</center>'
         });
